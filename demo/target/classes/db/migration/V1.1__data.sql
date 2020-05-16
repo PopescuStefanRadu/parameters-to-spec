@@ -1,4 +1,4 @@
-INSERT INTO product(id, name, ean, creationTime, updateTime)
+INSERT INTO product(id, name, ean, creation_time, update_time)
 VALUES ('0', 'Arta subtila a nepasarii - Mark Manson', '9786067891096', '2017-11-05T00:00:00', '2017-11-05T00:00:00'),
        ('1', 'Unfu*k Yourself. Elibereaza-ti mintea si traieste-ti viata', '9786067891737', '2019-06-06T00:00:00',
         '2019-06-06T00:00:00'),

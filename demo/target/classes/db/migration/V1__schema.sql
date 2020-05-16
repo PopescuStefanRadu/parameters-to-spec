@@ -3,8 +3,8 @@ CREATE TABLE product
     id           varchar(255) PRIMARY KEY,
     name         varchar(255),
     ean          varchar(255),
-    creationTime timestamp,
-    updateTime   timestamp
+    creation_time timestamp,
+    update_time   timestamp
 );
 
 
