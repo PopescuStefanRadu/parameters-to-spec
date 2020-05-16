@@ -1,5 +1,6 @@
 package ro.popescustefanradu.specmapper.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ public class ShopProduct {
 
     @Id
     @EmbeddedId
+    @JsonUnwrapped
     private PK pk;
 
     private BigDecimal price;
