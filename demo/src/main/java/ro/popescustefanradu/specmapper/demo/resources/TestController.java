@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ro.popescustefanradu.specmapper.demo.entities.Product;
 import ro.popescustefanradu.specmapper.demo.entities.ShopProduct;
+import ro.popescustefanradu.specmapper.demo.model.ShopProductExplicitFilterModel;
 import ro.popescustefanradu.specmapper.demo.repository.ProductRepository;
 import ro.popescustefanradu.specmapper.demo.model.TestFilterModel;
 import ro.popescustefanradu.specmapper.demo.repository.ShopProductRepository;
@@ -39,6 +41,10 @@ public class TestController {
         return productRepository.findAll(nameSpecs.and(valueSpecs));
     }
 
+    @GetMapping("explicit-filter")
+    public ShopProductExplicitFilterModel testExplicitFilter(@ModelAttribute ShopProductExplicitFilterModel explicitFilter) {
+        return explicitFilter;
+    }
 
     @GetMapping("query-params")
     public Map<String, List<String>> showQueryParams(@RequestParam(required = false) MultiValueMap<String, String> params) {
