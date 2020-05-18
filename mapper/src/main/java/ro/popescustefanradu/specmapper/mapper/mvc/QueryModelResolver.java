@@ -153,7 +153,7 @@ public class QueryModelResolver implements HandlerMethodArgumentResolver {
         }
 
         // todo research cleaner solution
-        if (String.class.isAssignableFrom(filterConditionType)) {
+        if (String.class.isAssignableFrom(filterConditionType) && operator.filterType instanceof StringFilterCondition.StringFilterType) {
             try {
                 String value = webDataBinder.convertIfNecessary(rawParams[0], String.class);
                 FilterCondition<T> filterCondition = (FilterCondition<T>) new StringFilterCondition((StringFilterCondition.StringFilterType) operator.filterType, value);
@@ -164,7 +164,7 @@ public class QueryModelResolver implements HandlerMethodArgumentResolver {
             }
         }
 
-        if (Comparable.class.isAssignableFrom(filterConditionType)) {
+        if (Comparable.class.isAssignableFrom(filterConditionType) && operator.filterType instanceof ComparableSimpleFilterCondition.ComparableFilterType) {
             try {
                 T value = webDataBinder.convertIfNecessary(rawParams[0], filterConditionType);
                 return Optional.of((FilterCondition<T>) new ComparableSimpleFilterCondition((ComparableSimpleFilterCondition.ComparableFilterType) operator.filterType, (Comparable) value));
