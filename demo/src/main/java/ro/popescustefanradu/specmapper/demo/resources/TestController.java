@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ro.popescustefanradu.specmapper.demo.entities.Product;
 import ro.popescustefanradu.specmapper.demo.entities.ShopProduct;
 import ro.popescustefanradu.specmapper.demo.model.ShopProductExplicitFilterModel;
-import ro.popescustefanradu.specmapper.demo.repository.ProductRepository;
-import ro.popescustefanradu.specmapper.demo.model.TestFilterModel;
+import ro.popescustefanradu.specmapper.demo.model.ShopProductFilterModel;
 import ro.popescustefanradu.specmapper.demo.repository.ShopProductRepository;
 import ro.popescustefanradu.specmapper.mapper.mvc.QueryModel;
 
@@ -21,7 +19,6 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class TestController {
-    private final ProductRepository productRepository;
     private final ShopProductRepository shopProductRepository;
 
     @GetMapping("hello-world")
@@ -29,16 +26,15 @@ public class TestController {
         return "Hello World!";
     }
 
-    @GetMapping("all-shop-products")
-    public List<ShopProduct> allShopProducts() {
-        return this.shopProductRepository.findAll();
-    }
-
-    @GetMapping("converter")
-    public List<Product> getFiltered(@QueryModel TestFilterModel filterModel) {
-        Specification<Product> nameSpecs = filterModel.getName().toSpec((root, query) -> root.get("name"));
-        Specification<Product> valueSpecs = filterModel.getValue().toSpec((root, query) -> root.get("value"));
-        return productRepository.findAll(nameSpecs.and(valueSpecs));
+    @GetMapping("shop-product")
+    public List<ShopProduct> getFiltered(@QueryModel ShopProductFilterModel filterModel) {
+        List<Specification<ShopProduct>> specs = List.of(
+                filterModel.getProductName().toSpec((root, query) -> root.get("pk").get("product").get("name")),
+                filterModel.getPrice().toSpec((root, query) -> root.get("price")),
+                filterModel.getProductCreationTime().toSpec((root, query) -> root.get("pk").get("product").get("creationTime")),
+                filterModel.getShopName().toSpec((root, query) -> root.get("pk").get("shop").get("name"))
+        );
+        return shopProductRepository.findAll(specs.stream().reduce(Specification.where(null), Specification::and));
     }
 
     @GetMapping("explicit-filter")

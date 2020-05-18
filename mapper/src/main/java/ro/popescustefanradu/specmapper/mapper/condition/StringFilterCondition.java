@@ -8,13 +8,17 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@NoArgsConstructor
-@AllArgsConstructor
 public class StringFilterCondition extends SimpleFilterCondition<String> {
-    StringFilterType filterType;
+    private final StringFilterType filterType;
+
+    public StringFilterCondition(StringFilterType filterType, String value) {
+        super(value);
+        this.filterType = filterType;
+    }
 
     @Override
     public <ENTITY> Specification<ENTITY> toSpec(ExpressionQualifier<String> expression) {
@@ -46,7 +50,32 @@ public class StringFilterCondition extends SimpleFilterCondition<String> {
             public Predicate toPredicate(Expression<String> expression, CriteriaBuilder criteriaBuilder, String value) {
                 return criteriaBuilder.notLike(expression, "%" + value + "%");
             }
+        },
+        STARTS_WITH {
+            @Override
+            public Predicate toPredicate(Expression<String> expression, CriteriaBuilder criteriaBuilder, String value) {
+                return criteriaBuilder.like(expression, value + "%");
+            }
+        },
+        STARTS_WITH_IGNORE_CASE {
+            @Override
+            public Predicate toPredicate(Expression<String> expression, CriteriaBuilder criteriaBuilder, String value) {
+                return criteriaBuilder.like(criteriaBuilder.lower(expression), value.toLowerCase() + "%");
+            }
+        },
+        ENDS_WITH {
+            @Override
+            public Predicate toPredicate(Expression<String> expression, CriteriaBuilder criteriaBuilder, String value) {
+                return criteriaBuilder.like(expression, "%" + value);
+            }
+        },
+        ENDS_WITH_IGNORE_CASE {
+            @Override
+            public Predicate toPredicate(Expression<String> expression, CriteriaBuilder criteriaBuilder, String value) {
+                return criteriaBuilder.like(criteriaBuilder.lower(expression), "%" + value.toLowerCase());
+            }
         };
+
         public abstract Predicate toPredicate(Expression<String> expression, CriteriaBuilder criteriaBuilder, String value);
     }
 }

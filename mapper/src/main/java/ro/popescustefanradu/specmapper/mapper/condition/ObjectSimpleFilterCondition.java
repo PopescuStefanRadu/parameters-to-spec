@@ -8,13 +8,17 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@NoArgsConstructor
-@AllArgsConstructor
 public class ObjectSimpleFilterCondition<T> extends SimpleFilterCondition<T> {
-    ObjectFilterType filterType;
+    private final ObjectFilterType filterType;
+
+    public ObjectSimpleFilterCondition(ObjectFilterType filterType, T value) {
+        super(value);
+        this.filterType = filterType;
+    }
 
     @Override
     public <ENTITY> Specification<ENTITY> toSpec(ExpressionQualifier<T> expression) {

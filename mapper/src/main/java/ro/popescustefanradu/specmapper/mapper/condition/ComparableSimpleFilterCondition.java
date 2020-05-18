@@ -8,14 +8,17 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 
-@Data
+@Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@NoArgsConstructor
-@AllArgsConstructor
 public class ComparableSimpleFilterCondition<T extends Comparable<T>> extends SimpleFilterCondition<T> {
     @NonNull
     ComparableFilterType filterType;
+
+    public ComparableSimpleFilterCondition(ComparableFilterType filterType, T value) {
+        super(value);
+        this.filterType = filterType;
+    }
 
     @Override
     public <ENTITY> Specification<ENTITY> toSpec(ExpressionQualifier<T> expression) {
