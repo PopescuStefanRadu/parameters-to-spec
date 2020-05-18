@@ -30,9 +30,10 @@ public class TestController {
     public List<ShopProduct> getFiltered(@QueryModel ShopProductFilterModel filterModel) {
         List<Specification<ShopProduct>> specs = List.of(
                 filterModel.getProductName().toSpec((root, query) -> root.get("pk").get("product").get("name")),
-                filterModel.getPrice().toSpec((root, query) -> root.get("price")),
                 filterModel.getProductCreationTime().toSpec((root, query) -> root.get("pk").get("product").get("creationTime")),
-                filterModel.getShopName().toSpec((root, query) -> root.get("pk").get("shop").get("name"))
+                filterModel.getProductEan().toSpec((root, query) -> root.get("pk").get("product").get("ean")),
+                filterModel.getShopName().toSpec((root, query) -> root.get("pk").get("shop").get("name")),
+                filterModel.getPrice().toSpec((root, query) -> root.get("price"))
         );
         return shopProductRepository.findAll(specs.stream().reduce(Specification.where(null), Specification::and));
     }

@@ -18,6 +18,7 @@ public class ShopProductFilterModel {
     private final FilterField<String> productName;
     // todo add custom formatting via existing @DateTimeFormat
     private final FilterField<LocalDateTime> productCreationTime;
+    private final FilterField<String> productEan;
     private final FilterField<BigDecimal> price;
     private final FilterField<String> shopName;
 }

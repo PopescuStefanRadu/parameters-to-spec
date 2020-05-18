@@ -14,11 +14,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import ro.popescustefanradu.specmapper.mapper.FilterCondition;
 import ro.popescustefanradu.specmapper.mapper.FilterField;
-import ro.popescustefanradu.specmapper.mapper.RawOperator;
-import ro.popescustefanradu.specmapper.mapper.condition.ComparableCompositeFilterCondition;
-import ro.popescustefanradu.specmapper.mapper.condition.ComparableSimpleFilterCondition;
-import ro.popescustefanradu.specmapper.mapper.condition.ObjectSimpleFilterCondition;
-import ro.popescustefanradu.specmapper.mapper.condition.StringFilterCondition;
+import ro.popescustefanradu.specmapper.mapper.condition.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
@@ -26,6 +22,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static ro.popescustefanradu.specmapper.mapper.RawOperator.*;
 
 @Slf4j
 public class QueryModelResolver implements HandlerMethodArgumentResolver {
@@ -137,9 +135,16 @@ public class QueryModelResolver implements HandlerMethodArgumentResolver {
             log.warn("Multiple values for param name not supported. Param name: {}", rawCondition.getParamName());
         }
         var operator = rawCondition.getOperator();
-        if (operator.equals(RawOperator.BETWEEN) || operator.equals(RawOperator.CONTAINS)) {
+        if (operator == IN || operator == NOT_IN) {
+            String[] splitRawValues = rawParams[0].split(",");
+            List<T> values = convertArray(splitRawValues, filterConditionType, webDataBinder, rawCondition);
+            return Optional.of(new SimpleCompositeFilterCondition<>((SimpleCompositeFilterCondition.ListParamFilterType) operator.filterType, values));
+        }
+
+        if (operator.equals(BETWEEN) || operator.equals(CONTAINS)) {
             if (Comparable.class.isAssignableFrom(filterConditionType)) {
                 String[] splitRawValues = rawParams[0].split(",");
+                // todo remove empty strings?
                 List<T> values = convertArray(splitRawValues, filterConditionType, webDataBinder, rawCondition);
                 ComparableCompositeFilterCondition.ComparableCompositeFilterType filterType = (ComparableCompositeFilterCondition.ComparableCompositeFilterType) operator.filterType;
                 return Optional.of((FilterCondition<T>) new ComparableCompositeFilterCondition(filterType, values));
